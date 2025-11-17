@@ -17,8 +17,20 @@ void main() {
 
 final log = Logger('DualCounterApp');
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool _isDark = false;
+
+  void _toggleTheme(bool value) {
+    setState(() => _isDark = value);
+    log.info('Tema alternado para ${_isDark ? 'escuro' : 'claro'}.');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,15 +41,34 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
         useMaterial3: true,
+        brightness: Brightness.light,
       ),
-      home: const DualCounterPage(title: 'Contadores com Limite e Passo'),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        useMaterial3: true,
+        colorSchemeSeed: Colors.blue,
+      ),
+      themeMode: _isDark ? ThemeMode.dark : ThemeMode.light,
+      home: DualCounterPage(
+        title: 'Contadores com Limite e Passo',
+        isDarkMode: _isDark,
+        onToggleTheme: _toggleTheme,
+      ),
     );
   }
 }
 
 class DualCounterPage extends StatefulWidget {
-  const DualCounterPage({super.key, required this.title});
+  const DualCounterPage({
+    super.key,
+    required this.title,
+    required this.isDarkMode,
+    required this.onToggleTheme,
+  });
+
   final String title;
+  final bool isDarkMode;
+  final ValueChanged<bool> onToggleTheme;
 
   @override
   State<DualCounterPage> createState() => _DualCounterPageState();
@@ -202,6 +233,20 @@ class _DualCounterPageState extends State<DualCounterPage> {
       appBar: AppBar(
         backgroundColor: Colors.lightBlue.shade200,
         title: Text(widget.title),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Row(
+              children: [
+                Icon(widget.isDarkMode ? Icons.dark_mode : Icons.light_mode),
+                Switch.adaptive(
+                  value: widget.isDarkMode,
+                  onChanged: widget.onToggleTheme,
+                ),
+              ],
+            ),
+          ),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(60.0),
           child: Padding(
