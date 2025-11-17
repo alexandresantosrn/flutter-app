@@ -50,7 +50,7 @@ class _MyAppState extends State<MyApp> {
       ),
       themeMode: _isDark ? ThemeMode.dark : ThemeMode.light,
       home: DualCounterPage(
-        title: 'Contadores com Limite e Passo',
+        title: 'Contadores',
         isDarkMode: _isDark,
         onToggleTheme: _toggleTheme,
       ),
